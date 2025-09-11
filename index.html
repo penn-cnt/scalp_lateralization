@@ -261,8 +261,8 @@
 
             AI = AI.toPrecision(2);
             AI = AI.toString();
-            let leftOutput = `${leftProb} (95%CI: ${leftCI[0]} - ${leftCI[1]})`;
-            let rightOutput = `${rightProb} (95%CI: ${rightCI[0]} - ${rightCI[1]})`;
+            let leftOutput = `${leftProb} (95% CI: ${leftCI[0]} - ${leftCI[1]})`;
+            let rightOutput = `${rightProb} (95% CI: ${rightCI[0]} - ${rightCI[1]})`;
 
             document.getElementById("demo_right").innerHTML = rightOutput;
             document.getElementById("demo_left").innerHTML = leftOutput;
