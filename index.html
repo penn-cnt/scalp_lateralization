@@ -209,45 +209,46 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../../assets/js/vendor/popper.min.js"></script>
     <script src="../../dist/js/bootstrap.min.js"></script>
+    <script src="coefs.js"></script>
 
     <script>
+        // Find the confidence interval for a asymmetry index
+        // this assuemes we have the list of 1000 paramaters
+        function findCI(AI, coef_list) {
+            let probs = [];
+
+            for (let coef of coef_list) {
+                let singleProb = 1 / (1 + Math.exp(-coef[0] - (coef[1] * AI)));
+                probs.push(singleProb);
+            }
+
+            // 95% confidence interval, get the 97.5th percentile and 2.5th percentile value values
+            probs.sort()
+            return [probs[24], probs[974]];
+        }
+
         function myFunction() {
-            // NOTE: the zero index corresponds to the intercept, and 1 corresponds to the coefficient
-            let leftCovMatrix = [[0.02313839, 0.00166278], [0.00166278, 0.16540264]];
-            let rightCovMatrix = [[0.02857446, 0.02524215], [0.02524215, 0.23241397]];
 
             // [const_left, sai_coeff_left, const_right, sai_coeff_right]
             var coef = [-0.0098, 3.2208, -0.5571, -3.8549];
             // Calculate the probability using the logistic regression formula
             var AI = ( Number(document.getElementById("LSR").value) - Number(document.getElementById("RSR").value) ) / ( Number(document.getElementById("LSR").value) + Number(document.getElementById("RSR").value) );
-
-            // Find the linear predictors for both the left and right models
-            let leftLinearPredictor = coef[0] + (coef[1] * AI);
-            let rightLinearPredictor = coef[2] + (coef[3] * AI);
-
-            // Find the variance for the linear predictors 
-            // I DON'T FULLY UNDERSTAND THE MATH FOR THIS, LOOK INTO THIS A LITTLE LATER
-            let leftLinearPredictorVariance = leftCovMatrix[0][0] + (leftCovMatrix[1][1] * (AI ** 2)) + (2 * AI * rightCovMatrix[0][1]);
-            let rightLinearPredictorVariance = rightCovMatrix[0][0] + (rightCovMatrix[1][1] * (AI ** 2)) + (2 * AI * rightCovMatrix[0][1])
             
-
             // left vs rest
             let leftProb = 1 / (1 + Math.exp(-coef[0] - (coef[1] * AI)));
             // right vs rest  
-            let rightProb = 1 / (1 + Math.exp(-coef[2] - (coef[3] * AI)));   
+            let rightProb = 1 / (1 + Math.exp(-coef[2] - (coef[3] * AI)));
 
-            let leftStdErr = Math.sqrt(leftLinearPredictorVariance) * (leftProb) * (1 - leftProb);
-            let rightStdErr = Math.sqrt(rightLinearPredictorVariance) * (rightProb) * (1 - rightProb);
-            
-            // THIS IS TO CONSTRUCT A 95% CONFIDENCE INTERVAL
-            let leftCI = [leftProb - (1.96 * leftStdErr), leftProb + (1.96 * leftStdErr)]
-            let rightCI = [rightProb - (1.96 * rightStdErr), rightProb + (1.96 * rightStdErr)]
+            // Find the confidence interval
+            // Using method described in the email
+            let leftCI = findCI(AI, coef_lists["left_vs_rest"]);
+            let rightCI = findCI(AI, coef_lists["right_vs_rest"]);
 
-            // Get it to 3 significant figures
-            leftCI[0] = (Math.max(leftCI[0] * 100, 0)).toPrecision(3).toString() + "%";
-            leftCI[1] = (Math.max(leftCI[1] * 100, 0)).toPrecision(3).toString() + "%";
-            rightCI[0] = (Math.max(rightCI[0] * 100, 0)).toPrecision(3).toString() + "%";
-            rightCI[1] = (Math.max(rightCI[1] * 100, 0)).toPrecision(3).toString() + "%";
+            // Properly format the results to be presentable
+            leftCI[0] = ((leftCI[0] * 100).toPrecision(3)).toString() + "%";
+            leftCI[1] = ((leftCI[1] * 100).toPrecision(3)).toString() + "%";
+            rightCI[0] = ((rightCI[0] * 100).toPrecision(3)).toString() + "%";
+            rightCI[1] = ((rightCI[1] * 100).toPrecision(3)).toString() + "%";
 
             leftProb = leftProb * 100;
             leftProb = leftProb.toPrecision(3);
