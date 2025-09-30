@@ -140,7 +140,7 @@
 
         <div class="row top-buffer">
             <div class="col-md"> 
-            <p> Where <em>Spikes<sub>Left</sub></em> is the number of spikes in the left hemisphere, and <em>Spikes<sub>Right</sub></em> is the number of spikes in the right hemisphere. <em>SAI</em> ranges between -1 and 1. A positive <em>SAI</em> implies more spikes on the left, a negative <em>AI</em> implies more spikes on the right, and an <em>SAI</em> of zero implies an equal number of spikes in the left and right temporal lobe. We performed bootstrapping on our data and we used 1000 model coefficients for each model.  </p>
+            <p> Where <em>Spikes<sub>Left</sub></em> is the number of spikes in the left hemisphere, and <em>Spikes<sub>Right</sub></em> is the number of spikes in the right hemisphere. <em>SAI</em> ranges between -1 and 1. A positive <em>SAI</em> implies more spikes on the left, a negative <em>AI</em> implies more spikes on the right, and an <em>SAI</em> of zero implies an equal number of spikes in the left and right hemispheres. We performed bootstrapping on our data and we used 1000 model coefficients for each model to generate 95% confidence intervals.  </p>
             <p>The formula for Model 1 (predicting the probability of left-sided seizure onset zone) is:</p>
             <p>\[Probabililty_{Left} = \frac{1}{1+exp(-coef_{1} - SAI \times coef_{2})}\]</p>
             <p>The formula for Model 2 (predicting the probability of right-sided seizure onset zone) is:</p>
